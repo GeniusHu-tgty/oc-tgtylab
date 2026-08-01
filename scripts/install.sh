@@ -72,7 +72,7 @@ if [ ! -d .venv ]; then
 fi
 .venv/bin/python -m pip install --upgrade pip -q
 echo "==> 安装 MCP 依赖 (mcp / dnspython / curl_cffi / pyyaml) ..."
-.venv/bin/pip install -q "mcp>=1.20,<1.29" "dnspython>=2.4" "curl_cffi>=0.6.0" "pyyaml"
+.venv/bin/pip install -q --timeout 60 "mcp>=1.20,<1.29" "dnspython>=2.4" "curl_cffi>=0.6.0" "pyyaml" || { warn "官方源超时，改用清华镜像重试..."; .venv/bin/pip install -q --timeout 60 -i https://pypi.tuna.tsinghua.edu.cn/simple "mcp>=1.20,<1.29" "dnspython>=2.4" "curl_cffi>=0.6.0" "pyyaml"; }
 # hunter 仓库自身 pyproject 里的依赖（如果包含本地包）
 if [ -f mcp/hunter/pyproject.toml ]; then
   .venv/bin/pip install -q -e mcp/hunter 2>/dev/null || \
@@ -83,7 +83,7 @@ ok "venv ready"
 # ---------- 5. jsreverser / jshook (optional) ----------
 echo "==> 安装 JS 逆向工具 (jsreverser-mcp / jshook, 可选) ..."
 if command -v npm >/dev/null 2>&1; then
-  npm install -g jsreverser-mcp @jshookmcp/jshook 2>/dev/null && ok "jsreverser + jshook" || warn "npm 全局安装失败（跳过，可手动: npm i -g jsreverser-mcp @jshookmcp/jshook）"
+  timeout 120 npm install -g jsreverser-mcp @jshookmcp/jshook 2>/dev/null && ok "jsreverser + jshook" || warn "npm 全局安装失败/超时（跳过，可手动: npm i -g jsreverser-mcp @jshookmcp/jshook）"
 else
   warn "npm 不存在，跳过 jsreverser/jshook"
 fi
