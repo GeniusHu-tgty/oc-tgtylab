@@ -45,10 +45,14 @@ iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.co
 
 ### Option B — deploy via AI prompt
 
-Copy the message below and send it to opencode (or any AI terminal). The AI deploys everything:
+Copy the message below and send it to opencode (or any AI terminal). The AI deploys **both oc-tgtylab and the Hunter subproject**:
 
 ```
-Deploy the oc-tgtylab project: clone https://github.com/GeniusHu-tgty/oc-tgtylab.git to ~/oc-tgtylab (with submodules), run scripts/install.sh to complete the installation, then run scripts/healthcheck.sh to verify all components are ready. When finished, tell me how to start using it.
+Deploy the oc-tgtylab project (including the Hunter subproject):
+1. Clone https://github.com/GeniusHu-tgty/oc-tgtylab.git to ~/oc-tgtylab with --recurse-submodules so the Hunter subproject (mcp/hunter) is fetched together;
+2. Confirm mcp/hunter/mcp_server.py exists and Hunter is ready;
+3. Run scripts/install.sh to complete the installation, then run scripts/healthcheck.sh to verify all components are ready;
+4. When finished, tell me how to start using it.
 ```
 
 ### Verify deployment

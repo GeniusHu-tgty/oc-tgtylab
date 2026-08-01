@@ -45,10 +45,14 @@ iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.co
 
 ### 选项 B — 提示词部署（发给 AI）
 
-复制下面这段话，发给 opencode（或任意 AI 终端），AI 会自动完成部署：
+复制下面这段话，发给 opencode（或任意 AI 终端），AI 会自动完成 **oc-tgtylab 与 Hunter 两个项目**的部署：
 
 ```
-部署 oc-tgtylab 项目：克隆 https://github.com/GeniusHu-tgty/oc-tgtylab.git 到 ~/oc-tgtylab（含 submodule），运行 scripts/install.sh 完成安装，再运行 scripts/healthcheck.sh 验证所有组件就绪。完成后告诉我如何开始使用。
+部署 oc-tgtylab 项目（含 Hunter 子项目）：
+1. 用 --recurse-submodules 克隆 https://github.com/GeniusHu-tgty/oc-tgtylab.git 到 ~/oc-tgtylab，确保 Hunter 子项目（mcp/hunter）一并拉取；
+2. 确认 mcp/hunter/mcp_server.py 存在，Hunter 就绪；
+3. 运行 scripts/install.sh 完成安装，再运行 scripts/healthcheck.sh 验证所有组件就绪；
+4. 完成后告诉我如何开始使用。
 ```
 
 ### 确认部署
