@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Runtime artifacts
+workspace/cases/**/evidence/
+workspace/exports/evidence/
+workspace/samples/_quarantine/
+workspace/data/*.db
+workspace/data/*.sqlite*
+sessions/
+evidence/
+
+# Node
+node_modules/
+
+# Local install generated (install.sh rewrites opencode.json placeholders)
+*.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
