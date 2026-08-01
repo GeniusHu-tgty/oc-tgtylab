@@ -29,26 +29,26 @@
 
 ## Quick Start
 
-### One-click install (recommended)
+### Option A — one-line install
 
-Copy the message below and send it to opencode (or any AI terminal):
-
-```
-Deploy the oc-tgtylab project:
-Option A — one-click auto install: you run clone, install script and health check, then report the result.
-Option B — manual install: only give me the commands, I will run them myself.
-List both options (A / B) first and let me choose.
-```
-
-Pick **A** — the AI clones, deploys, verifies, and tells you how to start.
-
-### Manual
+**Linux / macOS / WSL**, copy and run this line:
 
 ```bash
-git clone --recurse-submodules https://github.com/GeniusHu-tgty/oc-tgtylab.git
-cd oc-tgtylab
-./scripts/install.sh        # Windows: .\scripts\install.ps1
-./scripts/healthcheck.sh    # verify
+bash <(curl -fsSL https://raw.githubusercontent.com/GeniusHu-tgty/oc-tgtylab/main/scripts/quick-install.sh)
+```
+
+**Windows** (PowerShell), copy and run this line:
+
+```powershell
+iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/GeniusHu-tgty/oc-tgtylab/main/scripts/quick-install.ps1'))
+```
+
+### Option B — deploy via AI prompt
+
+Copy the message below and send it to opencode (or any AI terminal). The AI deploys everything:
+
+```
+Deploy the oc-tgtylab project: clone https://github.com/GeniusHu-tgty/oc-tgtylab.git to ~/oc-tgtylab (with submodules), run scripts/install.sh to complete the installation, then run scripts/healthcheck.sh to verify all components are ready. When finished, tell me how to start using it.
 ```
 
 ### Verify deployment
@@ -57,7 +57,7 @@ cd oc-tgtylab
 2. Press `Tab` (or type `/agents`) to switch to **security-operator** mode
 3. Ghost operator identity shown = deployed. Give it a task.
 
-> ⚠️ Use the project from inside the `oc-tgtylab` directory. MCP tools and knowledge base paths are relative to the project root. Move the directory → re-run `./scripts/install.sh`.
+> ⚠️ Use the project from inside the `oc-tgtylab` directory. MCP tools and knowledge base paths are relative to the project root. Move the directory → re-run Option A or B.
 
 ## Routing
 
