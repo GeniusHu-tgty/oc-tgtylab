@@ -49,11 +49,11 @@ else
   warn "ghidra bridge 缺失"
 fi
 
-# Workspace
-for d in workspace/cases workspace/kb workspace/samples workspace/exports workspace/notes workspace/patches; do
-  [ -d "$d" ] || warn "workspace 子目录缺失: $d"
+# Workspace (项目根即工作区根)
+for d in cases kb samples exports notes patches reports tools projects data; do
+  [ -d "$d" ] || warn "工作区子目录缺失: $d"
 done
-[ -d workspace/kb ] && ok "kb ($(find workspace/kb -name '*.md' | wc -l) 篇)"
+[ -d kb ] && ok "kb ($(find kb -name '*.md' | wc -l) 篇)"
 
 # Optional binaries
 command -v opencode >/dev/null 2>&1 && ok "opencode $(opencode --version 2>/dev/null)" || warn "opencode 不在 PATH"

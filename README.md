@@ -32,7 +32,7 @@ clone 下来，跑一个安装脚本，打开 opencode —— 你就是 Ghost。
 ```bash
 # 1. 前置要求
 #    - opencode (https://opencode.ai) — 脚本会自动装
-#    - python3 >= 3.10
+#    - python3 >= 3.12（3.12 以下部分 re_* 工具不可用）
 #    - Node.js (可选，jsreverser/jshook 需要)
 #    - 一个模型 API key（默认 deepseek，见下方「换模型」）
 
@@ -88,6 +88,7 @@ opencode
 ```
 oc-tgtylab/
 ├── opencode.json                  # 项目级配置（agent + variant:max + MCP）
+├── AGENTS.md / .mcp.json          # 工作区根标记（re_* 工具自动发现）
 ├── prompts/
 │   └── security-operator.md       # Ghost 完整系统提示词（3265 行）
 ├── mcp/
@@ -97,9 +98,9 @@ oc-tgtylab/
 ├── scripts/
 │   ├── install.sh / install.ps1   # 一键安装
 │   └── healthcheck.sh             # 完整性检查
-└── workspace/                     # 工作区
-    ├── kb/                        # 208+ 知识库文章
-    ├── samples/ exports/ notes/ reports/ patches/ cases/
+├── kb/                            # 208+ 知识库文章
+└── cases/ samples/ exports/ notes/ reports/ patches/ tools/ projects/
+                                    # 工作区（等价 open-tgtylab 仓库根）
 ```
 
 ## 常见问题

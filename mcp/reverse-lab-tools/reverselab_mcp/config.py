@@ -9,13 +9,18 @@ SERVER_NAME = "reverse_lab_tools"
 
 # ── Project root discovery ──
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
+# oc-tgtylab patch: parents[4] 在浅目录（clone 深度 < 5）会 IndexError，
+# 改用安全 fallback —— 找不到标记文件时回退到 PACKAGE_ROOT 自身。
+_FALLBACK_ROOT = (
+    PACKAGE_ROOT.parents[4] if len(PACKAGE_ROOT.parents) > 4 else PACKAGE_ROOT
+)
 REVERSE_ROOT = next(
     (
         parent
         for parent in [PACKAGE_ROOT, *PACKAGE_ROOT.parents]
         if (parent / "AGENTS.md").exists() and (parent / ".mcp.json").exists()
     ),
-    PACKAGE_ROOT.parents[4],
+    _FALLBACK_ROOT,
 )
 
 # ── Directory shortcuts ──

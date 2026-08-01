@@ -18,13 +18,25 @@ fail() { echo -e "${RED}[FAIL]${NC} $1"; }
 
 echo "==> oc-tgtylab installer @ $ROOT"
 
-# ---------- 1. python ----------
-if ! command -v python3 >/dev/null 2>&1; then
-  fail "python3 未安装 (需要 3.10+)。"
+# ---------- 1. python (prefer 3.12+, reverselab_mcp 需要 3.12+ 语法) ----------
+PYTHON=""
+for cand in python3.13 python3.12 python3.11 python3; do
+  if command -v "$cand" >/dev/null 2>&1; then
+    PYTHON="$cand"
+    break
+  fi
+done
+if [ -z "$PYTHON" ]; then
+  fail "未找到 python3 (需要 3.10+，推荐 3.12+)。"
   exit 1
 fi
-PY_VER=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
-ok "python3 $PY_VER"
+PY_VER=$($PYTHON -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+ok "python: $PYTHON $PY_VER"
+case "$PY_VER" in
+  3.10|3.11)
+    warn "Python $PY_VER 可能无法加载部分 re_* 工具（reverselab_mcp 需要 3.12+），建议安装 3.12+"
+    ;;
+esac
 
 # ---------- 2. opencode ----------
 if command -v opencode >/dev/null 2>&1; then
@@ -54,13 +66,13 @@ else
 fi
 
 # ---------- 4. Python venv + deps ----------
-echo "==> 创建 Python venv (.venv) ..."
+echo "==> 创建 Python venv (.venv, $PYTHON) ..."
 if [ ! -d .venv ]; then
-  python3 -m venv .venv
+  $PYTHON -m venv .venv
 fi
 .venv/bin/python -m pip install --upgrade pip -q
-echo "==> 安装 MCP 依赖 (mcp / dnspython / curl_cffi) ..."
-.venv/bin/pip install -q "mcp>=1.20,<1.29" "dnspython>=2.4" "curl_cffi>=0.6.0"
+echo "==> 安装 MCP 依赖 (mcp / dnspython / curl_cffi / pyyaml) ..."
+.venv/bin/pip install -q "mcp>=1.20,<1.29" "dnspython>=2.4" "curl_cffi>=0.6.0" "pyyaml"
 # hunter 仓库自身 pyproject 里的依赖（如果包含本地包）
 if [ -f mcp/hunter/pyproject.toml ]; then
   .venv/bin/pip install -q -e mcp/hunter 2>/dev/null || \

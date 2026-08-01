@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "reverse_lab_tools": {
+      "command": "uv",
+      "args": ["run", "python", "mcp/reverse-lab-tools/reverse_lab_tools_mcp.py"],
+      "env": {}
+    }
+  }
+}

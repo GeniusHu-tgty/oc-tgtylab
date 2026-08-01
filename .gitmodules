@@ -1,0 +1,3 @@
+[submodule "mcp/hunter"]
+	path = mcp/hunter
+	url = https://github.com/GeniusHu-tgty/Hunter.git
