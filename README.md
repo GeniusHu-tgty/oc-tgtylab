@@ -29,11 +29,18 @@
 
 ## Quick Start
 
-### Install by telling your AI
+### One-click install (recommended)
 
-Copy the message below and send it to opencode (or any AI terminal). The AI does the rest.
+Copy the message below and send it to opencode (or any AI terminal):
 
-> Clone the repository oc-tgtylab and deploy it: run `git clone --recurse-submodules https://github.com/GeniusHu-tgty/oc-tgtylab.git`, then `cd oc-tgtylab` and execute `./scripts/install.sh`. After deployment run `./scripts/healthcheck.sh` to confirm every component is ready. When finished, tell me how to start using it.
+```
+Deploy the oc-tgtylab project:
+Option A — one-click auto install: you run clone, install script and health check, then report the result.
+Option B — manual install: only give me the commands, I will run them myself.
+List both options (A / B) first and let me choose.
+```
+
+Pick **A** — the AI clones, deploys, verifies, and tells you how to start.
 
 ### Manual
 
@@ -42,8 +49,13 @@ git clone --recurse-submodules https://github.com/GeniusHu-tgty/oc-tgtylab.git
 cd oc-tgtylab
 ./scripts/install.sh        # Windows: .\scripts\install.ps1
 ./scripts/healthcheck.sh    # verify
-opencode                    # switch to security-operator (Tab / /agents)
 ```
+
+### Verify deployment
+
+1. Restart opencode and launch it inside the `oc-tgtylab` directory
+2. Press `Tab` (or type `/agents`) to switch to **security-operator** mode
+3. Ghost operator identity shown = deployed. Give it a task.
 
 > ⚠️ Use the project from inside the `oc-tgtylab` directory. MCP tools and knowledge base paths are relative to the project root. Move the directory → re-run `./scripts/install.sh`.
 

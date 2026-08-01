@@ -29,11 +29,18 @@
 
 ## 快速开始
 
-### 给 AI 发一段话，自动安装
+### 一键安装（推荐）
 
-复制下面这段话，发给 opencode（或任意 AI 终端），剩下的交给 AI：
+复制下面这段话，发给 opencode（或任意 AI 终端）：
 
-> 克隆 oc-tgtylab 仓库并完成部署：执行 `git clone --recurse-submodules https://github.com/GeniusHu-tgty/oc-tgtylab.git`，然后 `cd oc-tgtylab` 运行 `./scripts/install.sh`。部署完成后运行 `./scripts/healthcheck.sh` 确认所有组件就绪，并告诉我如何开始使用。
+```
+部署 oc-tgtylab 项目：
+选项 A —— 一键自动安装：你来执行克隆、安装脚本、健康检查，并汇报结果。
+选项 B —— 手动安装：只给我命令，我自己执行。
+回复时先列出 A / B 两个选项让我选择。
+```
+
+选择 **A** 后，AI 会自动完成克隆、部署、验证并告诉你如何开始。
 
 ### 手动安装
 
@@ -42,8 +49,13 @@ git clone --recurse-submodules https://github.com/GeniusHu-tgty/oc-tgtylab.git
 cd oc-tgtylab
 ./scripts/install.sh        # Windows: .\scripts\install.ps1
 ./scripts/healthcheck.sh    # 验证
-opencode                    # Tab / /agents 切换到 security-operator
 ```
+
+### 确认部署
+
+1. 重启 opencode，在 `oc-tgtylab` 目录内启动
+2. 按 `Tab` 键（或输入 `/agents`）切换到 **security-operator** 模式
+3. 看到 Ghost 操作员身份即部署成功，直接下达任务
 
 > ⚠️ 必须在 `oc-tgtylab` 目录内使用。MCP 工具和知识库路径均相对于项目根目录。移动目录后重跑 `./scripts/install.sh`。
 
