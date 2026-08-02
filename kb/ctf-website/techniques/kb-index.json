@@ -1408,6 +1408,228 @@
         "24-database/README.md"
       ],
       "priority": 10
+    },
+    {
+      "id": "bingo-waf-bypass-master",
+      "signals": [
+        "waf",
+        "bypass",
+        "cloudflare",
+        "modsecurity",
+        "akamai",
+        "imperva",
+        "安全狗",
+        "D盾",
+        "云锁",
+        "wapples",
+        "kisa",
+        "tamper",
+        "space2comment",
+        "randomcase",
+        "chunked"
+      ],
+      "files": [
+        "99-bingo-import/01-waf-bypass-master.md"
+      ],
+      "tags": [
+        "waf",
+        "bypass",
+        "sqli",
+        "import-bingo"
+      ]
+    },
+    {
+      "id": "bingo-korean-cms",
+      "signals": [
+        "gnuboard",
+        "그누보드",
+        "xe",
+        "rhymix",
+        "cafe24",
+        "youngcart",
+        "韩国cms",
+        "korean cms",
+        "adm",
+        "bo_table",
+        "csrf double token",
+        "gif polyglot",
+        "antsword"
+      ],
+      "files": [
+        "99-bingo-import/02-korean-cms-arsenal.md"
+      ],
+      "tags": [
+        "cms",
+        "korean",
+        "webshell",
+        "import-bingo"
+      ]
+    },
+    {
+      "id": "bingo-upload-auth-2fa",
+      "signals": [
+        "upload bypass",
+        "2fa",
+        "otp",
+        "mfa",
+        "jwt alg none",
+        "kid injection",
+        "password reset",
+        "oauth redirect",
+        "session fixation"
+      ],
+      "files": [
+        "99-bingo-import/03-upload-auth-2fa-bypass.md"
+      ],
+      "tags": [
+        "upload",
+        "auth",
+        "2fa",
+        "jwt",
+        "import-bingo"
+      ]
+    },
+    {
+      "id": "bingo-cache-xss-smuggling",
+      "signals": [
+        "cache poison",
+        "web cache deception",
+        "wcd",
+        "samesite",
+        "cache buster",
+        "xss exfil",
+        "keylogger",
+        "cspt",
+        "dom xss",
+        "http smuggling",
+        "cl.te",
+        "te.cl"
+      ],
+      "files": [
+        "99-bingo-import/04-cache-xss-dom-smuggling.md"
+      ],
+      "tags": [
+        "cache",
+        "xss",
+        "smuggling",
+        "import-bingo"
+      ]
+    },
+    {
+      "id": "bingo-sqli-db-api",
+      "signals": [
+        "database dump",
+        "union dump",
+        "group_concat",
+        "information_schema",
+        "xp_cmdshell",
+        "oob dns",
+        "heavy query",
+        "api fuzz",
+        "api version",
+        "swagger",
+        "bizlogic",
+        "negative amount",
+        "coupon abuse"
+      ],
+      "files": [
+        "99-bingo-import/05-sqli-db-api-arsenal.md"
+      ],
+      "tags": [
+        "sqli",
+        "database",
+        "api",
+        "bizlogic",
+        "import-bingo"
+      ]
+    },
+    {
+      "id": "bingo-apt-anti-hallucination",
+      "signals": [
+        "c2",
+        "dns tunnel",
+        "beacon",
+        "lateral movement",
+        "pth",
+        "ptt",
+        "phishing",
+        "supply chain",
+        "typosquat",
+        "dependency confusion",
+        "zero hal",
+        "fact registry",
+        "proxy rotate",
+        "ssrf chain"
+      ],
+      "files": [
+        "99-bingo-import/06-apt-anti-hallucination-supply-chain.md"
+      ],
+      "tags": [
+        "apt",
+        "c2",
+        "phishing",
+        "supplychain",
+        "import-bingo"
+      ]
+    },
+    {
+      "id": "bingo-core-engines",
+      "signals": [
+        "ip block",
+        "封禁",
+        "fingerprint blocked",
+        "verification",
+        "confidence",
+        "reproducibility",
+        "hallucination",
+        "phantom",
+        "execution anchor",
+        "only read sql",
+        "rollback",
+        "fatigue",
+        "deterministic check"
+      ],
+      "files": [
+        "99-bingo-import/07-core-engines.md"
+      ],
+      "tags": [
+        "engine",
+        "verification",
+        "anti-hallucination",
+        "import-bingo"
+      ]
+    },
+    {
+      "id": "bingo-tools-round2",
+      "signals": [
+        "heartbleed",
+        "ghostcat",
+        "ajp",
+        "js secret",
+        "api key regex",
+        "post exploit",
+        "privesc",
+        "param discovery",
+        "header bypass",
+        "login verdict",
+        "cloud token",
+        "deserialization",
+        "graphql introspection",
+        "autofill steal",
+        "bucket scan"
+      ],
+      "files": [
+        "99-bingo-import/08-tools-round2.md"
+      ],
+      "tags": [
+        "tools",
+        "ssl",
+        "ghostcat",
+        "cloud",
+        "deser",
+        "import-bingo"
+      ]
     }
-  ]
+  ],
+  "last_updated": "2026-08-02"
 }
