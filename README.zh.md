@@ -58,10 +58,51 @@ iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.co
 ### 确认部署
 
 1. 重启 opencode，在 `oc-tgtylab` 目录内启动
-2. 按 `Tab` 键（或输入 `/agents`）切换到 **security-operator** 模式
+2. 按 `Tab` 键（或输入 `/agents` 回车）切换到 **security-operator** 模式
 3. 看到 Ghost 操作员身份即部署成功，直接下达任务
 
-> ⚠️ 必须在 `oc-tgtylab` 目录内使用。MCP 工具和知识库路径均相对于项目根目录。移动目录后重跑选项 A 或 B。
+> ⚠️ 安装时脚本会同时写入 **opencode 全局配置**（`~/.config/opencode/opencode.json`），
+> 因此 **任意目录**启动 opencode 都能按 Tab 切换到 security-operator，无需 cd 到项目目录。
+> 项目目录内可完整使用 MCP 工具；目录外的 MCP 工具也一并注册（路径为绝对路径）。
+> 移动项目目录后，重跑选项 A 或 B 即可自动修正所有路径。
+
+### Tab 切换说明（重要）
+
+- **输入框为空时**按 `Tab` → 在 `build` / `plan` / `security-operator` 之间循环切换（多按几次直到顶部显示 `security-operator`）
+- **输入框有内容时**按 `Tab` → 是自动补全，不会切换 agent（这是 opencode 的键位设计，不是 bug）
+- 需要清空输入框后再按 `Tab`；或直接输入 `/agents` 并回车，在列表中选择
+- 推荐快捷键：`Ctrl+X` 然后 `A`（`<leader>a`）打开 agent 列表直接选择
+
+### 权限说明（零确认）
+
+切换到 **security-operator** 后，所有工具操作默认自动执行，无需手动回车确认：
+bash / read / edit / write / task（含子 agent 发布）/ webfetch / MCP 工具等全部 `allow`。
+如仍出现权限确认，请确认当前已切换到 `security-operator`（看输入框上方 agent 名称）。
+
+### 版本要求
+
+需要 **opencode >= 1.15**（`variant` 字段支持，推荐使用最新版 1.18+）。
+旧版本可能无法加载 `variant` / `mode` 配置，导致自定义模式不可用。
+升级：`opencode upgrade` 或 `npm i -g opencode-ai`。
+
+### 升级到最新版（老用户无损升级）
+
+**不需要删除旧项目**，直接重跑当初的安装命令即可原地升级：
+
+```bash
+# Linux / macOS / WSL（老用户）
+bash <(curl -fsSL https://raw.githubusercontent.com/GeniusHu-tgty/oc-tgtylab/main/scripts/quick-install.sh)
+
+# Windows PowerShell（老用户）
+iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/GeniusHu-tgty/oc-tgtylab/main/scripts/quick-install.ps1'))
+```
+
+升级脚本会自动完成：
+1. `git pull` 拉取最新代码（先重置 `opencode.json`/`tui.json` 托管文件，不会因本地路径改动产生冲突）
+2. 更新 Hunter submodule
+3. 重新执行 install 脚本：修正 MCP 绝对路径 + **写入全局配置（任意目录 Tab 可用）**
+
+**保留数据**：`cases/` `notes/` `exports/` `patches/` `samples/` `reports/` 等全部保留，不会删除。
 
 ## 路由
 

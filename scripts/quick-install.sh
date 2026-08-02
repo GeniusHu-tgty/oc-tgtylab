@@ -31,9 +31,19 @@ if ! command -v python3.12 >/dev/null 2>&1 && ! command -v python3 >/dev/null 2>
 fi
 
 if [ -d "$INSTALL_DIR/.git" ]; then
-  echo "==> 检测到已存在，执行更新..."
+  echo "==> 检测到已存在，执行无损升级（保留 cases/notes/exports/patches/samples 等数据）..."
   cd "$INSTALL_DIR"
-  git pull --rebase || warn "git pull 失败，继续使用现有代码"
+  # 升级策略：fetch + reset --hard 对齐远端。
+  # 理由：老用户本地 opencode.json 等托管文件被安装脚本改过路径，git pull --rebase
+  # 会因 unstaged changes 直接失败；而数据目录（cases/notes/exports/patches/samples）
+  # 仅跟踪 .gitkeep，用户数据全是未跟踪文件，reset --hard 不影响它们。
+  git fetch origin
+  if git symbolic-ref -q refs/remotes/origin/HEAD >/dev/null 2>&1; then
+    BRANCH="$(git symbolic-ref --short refs/remotes/origin/HEAD | sed 's|^origin/||')"
+    git reset --hard "origin/$BRANCH"
+  else
+    git reset --hard origin/main 2>/dev/null || git reset --hard origin/master
+  fi
   git submodule update --init --recursive
 else
   mkdir -p "$(dirname "$INSTALL_DIR")"
