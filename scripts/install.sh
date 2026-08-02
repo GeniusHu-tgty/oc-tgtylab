@@ -82,19 +82,40 @@ ok "venv ready"
 
 # ---------- 5. jsreverser / jshook (optional) ----------
 echo "==> 安装 JS 逆向工具 (jsreverser-mcp / jshook, 可选) ..."
+# macOS 无 GNU timeout，用 gtimeout（coreutils）或直接不限制
+TIMEOUT_CMD=""
+if command -v timeout >/dev/null 2>&1; then
+  TIMEOUT_CMD="timeout 120"
+elif command -v gtimeout >/dev/null 2>&1; then
+  TIMEOUT_CMD="gtimeout 120"
+fi
 if command -v npm >/dev/null 2>&1; then
-  timeout 120 npm install -g jsreverser-mcp @jshookmcp/jshook 2>/dev/null && ok "jsreverser + jshook" || warn "npm 全局安装失败/超时（跳过，可手动: npm i -g jsreverser-mcp @jshookmcp/jshook）"
+  $TIMEOUT_CMD npm install -g jsreverser-mcp @jshookmcp/jshook 2>/dev/null && ok "jsreverser + jshook" || warn "npm 全局安装失败/超时（跳过，可手动: npm i -g jsreverser-mcp @jshookmcp/jshook）"
 else
   warn "npm 不存在，跳过 jsreverser/jshook"
 fi
 
 # ---------- 6. opencode.json 占位符替换 ----------
+# 优先替换 __TGTYLAB_ROOT__ 占位符；若仓库文件直接写死了旧硬编码路径（/root/oc-tgtylab），
+# 也强制替换为实际安装路径，确保 MCP 全部指向当前目录。
+# 用「临时文件 + mv」方式替换，GNU sed / macOS BSD sed 全兼容（-i 写法在两边行为不一致）。
 echo "==> 写入 opencode.json 绝对路径 ..."
 if grep -q "__TGTYLAB_ROOT__" opencode.json; then
-  sed -i "s|__TGTYLAB_ROOT__|$ROOT|g" opencode.json
+  sed "s|__TGTYLAB_ROOT__|$ROOT|g" opencode.json > opencode.json.tmp && mv opencode.json.tmp opencode.json
   ok "opencode.json 已指向 $ROOT"
+elif grep -q "/root/oc-tgtylab" opencode.json; then
+  sed "s|/root/oc-tgtylab|$ROOT|g" opencode.json > opencode.json.tmp && mv opencode.json.tmp opencode.json
+  ok "opencode.json 硬编码路径已修正为 $ROOT"
 else
-  ok "opencode.json 无占位符，跳过"
+  ok "opencode.json 无需替换，跳过"
+fi
+
+# ---------- 6b. 全局安装（任意目录 Tab 可用） ----------
+echo "==> 写入 opencode 全局配置（任意目录可用 security-operator 模式）..."
+if "$PYTHON" "$ROOT/scripts/global-install.py" "$ROOT"; then
+  ok "全局安装完成：任意目录按 Tab 均可切换到 security-operator"
+else
+  warn "全局安装失败（不影响项目内使用），可手动执行: $PYTHON scripts/global-install.py"
 fi
 
 # ---------- 7. healthcheck ----------

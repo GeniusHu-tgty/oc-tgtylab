@@ -58,10 +58,51 @@ Deploy the oc-tgtylab project (including the Hunter subproject):
 ### Verify deployment
 
 1. Restart opencode and launch it inside the `oc-tgtylab` directory
-2. Press `Tab` (or type `/agents`) to switch to **security-operator** mode
+2. Press `Tab` (or type `/agents` + Enter) to switch to **security-operator** mode
 3. Ghost operator identity shown = deployed. Give it a task.
 
-> ⚠️ Use the project from inside the `oc-tgtylab` directory. MCP tools and knowledge base paths are relative to the project root. Move the directory → re-run Option A or B.
+> ⚠️ The installer also writes the **global opencode config** (`~/.config/opencode/opencode.json`),
+> so you can press `Tab` to switch to security-operator from **any directory** — no need to `cd` into the project.
+> Inside the project directory you get the full MCP toolset; outside it, the MCP servers are still registered (absolute paths).
+> Moved the project folder? Re-run Option A or B to fix all paths automatically.
+
+### Tab switching notes (important)
+
+- With an **empty input box**, press `Tab` → cycles `build` / `plan` / `security-operator` (keep pressing until the top shows `security-operator`)
+- With **text in the input box**, `Tab` triggers autocomplete, NOT agent switching (that's opencode's keybinding design, not a bug)
+- Clear the input first, or type `/agents` + Enter and pick from the list
+- Recommended shortcut: `Ctrl+X` then `A` (`<leader>a`) opens the agent list
+
+### Permissions (zero confirmation)
+
+After switching to **security-operator**, all tool operations run automatically — no manual Enter confirmation:
+bash / read / edit / write / task (incl. subagent spawn) / webfetch / MCP tools are all `allow`.
+If a permission prompt still appears, verify you are actually on `security-operator` (check the agent name above the input).
+
+### Version requirement
+
+Requires **opencode >= 1.15** (`variant` field support; latest 1.18+ recommended).
+Older versions may fail to load `variant` / `mode` config, making the custom mode unavailable.
+Upgrade: `opencode upgrade` or `npm i -g opencode-ai`.
+
+### Upgrade to latest (no-reinstall for existing users)
+
+**No need to delete the old project** — re-run the same one-line installer, it upgrades in place:
+
+```bash
+# Linux / macOS / WSL (existing install)
+bash <(curl -fsSL https://raw.githubusercontent.com/GeniusHu-tgty/oc-tgtylab/main/scripts/quick-install.sh)
+
+# Windows PowerShell (existing install)
+iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/GeniusHu-tgty/oc-tgtylab/main/scripts/quick-install.ps1'))
+```
+
+The updater automatically:
+1. `git pull` latest code (resets the managed `opencode.json`/`tui.json` first, so local path edits never cause merge conflicts)
+2. Updates the Hunter submodule
+3. Re-runs install: fixes MCP absolute paths + **writes the global config (Tab works from any directory)**
+
+**Your data is kept**: `cases/` `notes/` `exports/` `patches/` `samples/` `reports/` are all preserved.
 
 ## Routing
 

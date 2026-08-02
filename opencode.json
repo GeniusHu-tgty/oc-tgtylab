@@ -29,6 +29,32 @@
         "list": "allow",
         "question": "allow",
         "doom_loop": "allow",
+        "hunter_tools_*": "allow",
+        "hunter_*": "allow",
+        "jsreverser_*": "allow",
+        "jshook_*": "allow",
+        "ghidra_*": "allow",
+        "re_*": "allow",
+        "burp_*": "allow",
+        "mcp__*": "allow",
+        "*": "allow"
+      }
+    },
+    "general": {
+      "mode": "subagent",
+      "permission": {
+        "*": "allow"
+      }
+    },
+    "explore": {
+      "mode": "subagent",
+      "permission": {
+        "*": "allow"
+      }
+    },
+    "scout": {
+      "mode": "subagent",
+      "permission": {
         "*": "allow"
       }
     }
@@ -37,12 +63,12 @@
     "hunter_tools": {
       "type": "local",
       "command": [
-        "/root/oc-tgtylab/.venv/bin/python",
-        "/root/oc-tgtylab/mcp/hunter/mcp_server.py"
+        "__TGTYLAB_ROOT__/.venv/bin/python",
+        "__TGTYLAB_ROOT__/mcp/hunter/mcp_server.py"
       ],
       "environment": {
-        "OPEN_TGTYLAB_ROOT": "/root/oc-tgtylab",
-        "REVERSELAB_MCP_PATH": "/root/oc-tgtylab/mcp/reverse-lab-tools/reverse_lab_tools_mcp.py"
+        "OPEN_TGTYLAB_ROOT": "__TGTYLAB_ROOT__",
+        "REVERSELAB_MCP_PATH": "__TGTYLAB_ROOT__/mcp/reverse-lab-tools/reverse_lab_tools_mcp.py"
       }
     },
     "jsreverser": {
@@ -67,7 +93,7 @@
       "command": [
         "uv",
         "run",
-        "/root/oc-tgtylab/mcp/ghidra/bridge_mcp_ghidra.py",
+        "__TGTYLAB_ROOT__/mcp/ghidra/bridge_mcp_ghidra.py",
         "--ghidra-server",
         "http://127.0.0.1:18080/"
       ],
